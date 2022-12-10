@@ -1,7 +1,7 @@
-#![feature(core)]
+//#![feature(core)]
 //#![feature(collections)]
 #![feature(libc)]
-#![feature(slice_patterns)]
+//#![feature(slice_patterns)]
 //#![feature(str_char)]
 #![feature(rustc_private)]
 
@@ -16,7 +16,7 @@ use self::CheckResult::*; // TODO: why does swapping this line with one below br
 use rstcl::TokenType;
 
 pub mod rstcl;
-#[allow(dead_code, non_upper_case_globals, non_camel_case_types, non_snake_case, raw_pointer_derive)]
+#[allow(dead_code, non_upper_case_globals, non_camel_case_types, non_snake_case)]
 mod tcl;
 
 // http://www.tcl.tk/doc/howto/stubs.html
@@ -40,8 +40,8 @@ pub enum CheckResult<'a> {
 impl<'b> fmt::Display for CheckResult<'b> {
     fn fmt<'a>(&'a self, f: &mut fmt::Formatter) -> fmt::Result {
         return match self {
-            &Warn(ctx, msg, line) => write!(f, "WARN: {} at `{}` in `{}`", msg, line, ctx),
-            &Danger(ctx, msg, line) => write!(f, "DANGER: {} at `{}` in `{}`", msg, line, ctx),
+            &Warn(ctx, msg, line) => write!(f, "WARNING: {} at `{}` in `{}`", msg, line, ctx.replace("\n", "")),
+            &Danger(ctx, msg, line) => write!(f, "DANGEROUS: {} at `{}` in `{}`", msg, line, ctx.replace("\n", "")),
         };
     }
 }

@@ -4,15 +4,16 @@ name = "tclscan"
 version = "0.0.1"
 authors = ["Aidan Hobson Sayers <aidanhs@cantab.net>"]
 
-[dependencies]
-docopt = "1"
-enum_primitive = "0.0.2"
-num = "0.1.24"
-rustc-serialize = "0.3.14"
+build = "src/build.rs"
 
-[dependencies.bindgen]
-git = "https://github.com/rust-lang-nursery/rust-bindgen.git"
-tag = "v0.43.1"
+[build-dependencies]
+bindgen = "= 0.63.0"
+
+[dependencies]
+docopt = "1.1"
+enum_primitive = "0.1"
+num = "0.4"
+rustc-serialize = "0.3"
 
 [[bin]]
 

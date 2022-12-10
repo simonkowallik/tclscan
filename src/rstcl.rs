@@ -74,7 +74,7 @@ impl<'b, 'c: 'b> Iterator for TclTokenIter<'b, 'c> {
         let ret: Option<&'b TclToken<'c>> = match self.token.traverse(self.cur-1) {
             (0, Some(tok)) => Some(tok),
             (0, None) => None,
-            x => panic!("Invalid traverse return {:?}, iterator called after finish?", x),
+            x => panic!("ERROR: Invalid traverse return {:?}, iterator called after finish?", x),
         };
         return ret;
     }
@@ -270,10 +270,10 @@ fn parse<'a>(string: &'a str, is_command: bool, is_expr: bool) -> (TclParse<'a>,
             (true, false) => tcl::Tcl_ParseCommand(tcl_interp(), string_ptr, -1, 0, parse_ptr),
             // interp, start, numBytes, parsePtr
             (false, true) => tcl::Tcl_ParseExpr(tcl_interp(), string_ptr, -1, parse_ptr),
-            parse_args => panic!("Don't know how to parse {:?}", parse_args),
+            parse_args => panic!("UNPARSABLE: Don't know how to parse {:?}", parse_args),
         };
         if parsed != 0 {
-            println!("WARN: couldn't parse {}", string);
+            println!("UNPARSABLE: couldn't parse {}", string);
             return (TclParse { comment: Some(""), command: Some(""), tokens: vec![] }, "");
         }
         let tokens = make_tokens(string, string_start, &parse);
@@ -298,7 +298,7 @@ fn parse<'a>(string: &'a str, is_command: bool, is_expr: bool) -> (TclParse<'a>,
             (false, true) => {
                 (TclParse { comment: None, command: None, tokens: tokens }, "")
             },
-            _ => panic!("Unreachable"),
+            _ => panic!("UNPARSABLE: Unreachable"),
         };
 
         tcl::Tcl_FreeParse(parse_ptr);
@@ -368,7 +368,7 @@ fn make_tcltoken<'a>(tcl_token: &tcl::Tcl_Token, tokenval: &'a str, acc: &mut Ve
                 let tok = acc.pop().unwrap();
                 count += match tok.ttype {
                     Text | Bs | Command | Variable => count_tokens(&tok),
-                    _ => panic!("Invalid token type {:?}", tok.ttype),
+                    _ => panic!("ERROR: Invalid token type {:?}", tok.ttype),
                 };
                 subtokens.push(tok);
             }
@@ -394,7 +394,7 @@ fn make_tcltoken<'a>(tcl_token: &tcl::Tcl_Token, tokenval: &'a str, acc: &mut Ve
                     Word | Text | Bs | Command | Variable | SubExpr => {
                         count += count_tokens(&tok)
                     },
-                    _ => panic!("Invalid token {:?}", tok.ttype),
+                    _ => panic!("ERROR: Invalid token {:?}", tok.ttype),
                 }
                 subtokens.push(tok);
             }
